@@ -54,14 +54,17 @@ NEXT_PUBLIC_SITE_URL=https://your-domain.com
 
 | Shopify field            | Used for                                            |
 | ------------------------ | --------------------------------------------------- |
-| **Product type**         | Category filter pills on `/shop` (e.g. `Chicken`)   |
+| **Category** (taxonomy, falls back to **Product type**) | Home-page category cards + filter pills on `/shop` |
 | **Variants**             | Pack picker (500 g / 1 kg …) on product pages       |
 | **Compare-at price**     | Strike-through price + “% OFF” sticker              |
 | **Tags** (`Bestseller`, `New`, `Premium`, `Chef's Pick`) | Badge on product cards |
 | **Featured image**       | Product card / page imagery (falls back to SVG art) |
 
-Tip: set product types to `Chicken`, `Mutton`, `Seafood`, `Eggs`,
-`Ready to Cook` to light up the themed category cards on the home page.
+Categories come straight from your products: the site reads each product's
+**Category** field (the standard one on the Shopify product page) — or the
+free-text **Product type** when no category is set — and builds the home-page
+cards and shop filter pills from whatever it finds, with matching
+illustrations for chicken, mutton, seafood, eggs, ready-to-cook and more.
 
 ## 🧱 Stack
 
