@@ -1,0 +1,269 @@
+@import "tailwindcss";
+
+@theme {
+  /* ── Chikigo brand ─────────────────────────────────────────── */
+  --color-brand: #e8232e;
+  --color-brand-dark: #c1121f;
+  --color-brand-deep: #8e0a14;
+  --color-ink: #2b2426;
+  --color-ink-soft: #4a4144;
+  --color-cream: #fdf8f0;
+  --color-cream-dark: #f6ecdd;
+  --color-amber: #ffb703;
+  --color-leaf: #2f9e44;
+
+  --font-display: var(--font-baloo), "Baloo 2", ui-rounded, system-ui, sans-serif;
+  --font-body: var(--font-manrope), "Manrope", ui-sans-serif, system-ui, sans-serif;
+
+  --shadow-chunky: 0 6px 0 0 var(--color-ink);
+  --shadow-chunky-sm: 0 4px 0 0 var(--color-ink);
+  --shadow-lifted: 0 18px 40px -18px rgb(43 36 38 / 0.35);
+
+  --animate-marquee: marquee 26s linear infinite;
+  --animate-marquee-reverse: marquee-reverse 30s linear infinite;
+  --animate-float: float 5s ease-in-out infinite;
+  --animate-float-slow: float 7s ease-in-out infinite;
+  --animate-wiggle: wiggle 2.4s ease-in-out infinite;
+  --animate-pop: pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  --animate-steam: steam 2.6s ease-in-out infinite;
+  --animate-spin-slow: spin 14s linear infinite;
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @keyframes marquee-reverse {
+    from {
+      transform: translateX(-50%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0) rotate(var(--float-rotate, 0deg));
+    }
+    50% {
+      transform: translateY(-14px) rotate(var(--float-rotate, 0deg));
+    }
+  }
+  @keyframes wiggle {
+    0%,
+    100% {
+      transform: rotate(-4deg);
+    }
+    50% {
+      transform: rotate(5deg);
+    }
+  }
+  @keyframes pop {
+    0% {
+      transform: scale(0.6);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  @keyframes steam {
+    0% {
+      transform: translateY(0) scaleX(1);
+      opacity: 0;
+    }
+    30% {
+      opacity: 0.8;
+    }
+    100% {
+      transform: translateY(-18px) scaleX(1.4);
+      opacity: 0;
+    }
+  }
+}
+
+/* ── base ─────────────────────────────────────────────────────── */
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  ::selection {
+    background: var(--color-brand);
+    color: #fff;
+  }
+}
+
+/* component classes live in the components layer so Tailwind
+   utilities (hidden, px-*, bg-*) can override them */
+@layer components {
+
+/* hairline scrollbars for horizontal scrollers */
+.scrollbar-slim {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-brand) transparent;
+}
+.scrollbar-slim::-webkit-scrollbar {
+  height: 4px;
+}
+.scrollbar-slim::-webkit-scrollbar-thumb {
+  background: var(--color-brand);
+  border-radius: 999px;
+}
+
+/* ── typography helpers ──────────────────────────────────────── */
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.text-outline {
+  color: transparent;
+  -webkit-text-stroke: 2px var(--color-ink);
+}
+.text-outline-cream {
+  color: transparent;
+  -webkit-text-stroke: 2px var(--color-cream);
+}
+@media (min-width: 768px) {
+  .text-outline,
+  .text-outline-cream {
+    -webkit-text-stroke-width: 3px;
+  }
+}
+
+/* ── buttons ─────────────────────────────────────────────────── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  border-radius: 9999px;
+  border: 3px solid var(--color-ink);
+  padding: 0.65rem 1.5rem;
+  line-height: 1.2;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease,
+    color 0.15s ease;
+  box-shadow: var(--shadow-chunky-sm);
+  cursor: pointer;
+  user-select: none;
+}
+.btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 0 0 0 var(--color-ink);
+}
+@media (hover: hover) {
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 0 var(--color-ink);
+  }
+  .btn:hover:active {
+    transform: translateY(4px);
+    box-shadow: 0 0 0 0 var(--color-ink);
+  }
+}
+.btn-primary {
+  background: var(--color-brand);
+  color: #fff;
+}
+.btn-primary:hover {
+  background: var(--color-brand-dark);
+}
+.btn-ink {
+  background: var(--color-ink);
+  color: var(--color-cream);
+  border-color: var(--color-ink);
+  box-shadow: 0 4px 0 0 var(--color-brand);
+}
+@media (hover: hover) {
+  .btn-ink:hover {
+    box-shadow: 0 6px 0 0 var(--color-brand);
+  }
+}
+.btn-ink:active {
+  box-shadow: 0 0 0 0 var(--color-brand);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--color-ink);
+}
+.btn-cream {
+  background: var(--color-cream);
+  color: var(--color-ink);
+}
+.btn:disabled {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+/* ── scroll reveal ───────────────────────────────────────────── */
+
+/* hidden state only applies once JS has tagged <html class="js">,
+   so content stays readable without JavaScript */
+.js .reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.js .reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── decorative ──────────────────────────────────────────────── */
+
+.dot-grid {
+  background-image: radial-gradient(rgb(43 36 38 / 0.14) 1.5px, transparent 1.5px);
+  background-size: 22px 22px;
+}
+
+.sticker {
+  border: 3px solid var(--color-ink);
+  box-shadow: var(--shadow-chunky-sm);
+}
+
+.tilt-l {
+  transform: rotate(-2deg);
+}
+.tilt-r {
+  transform: rotate(2deg);
+}
+
+} /* end @layer components */
