@@ -1,11 +1,48 @@
 import { DEMO_PRODUCTS, demoProductByHandle } from "./demo-data";
 import type { ArtKey, Cart, CartLine, Money, Product, ProductVariant } from "./types";
 
-const domain = process.env.SHOPIFY_STORE_DOMAIN;
-const token = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN;
+const rawDomain = process.env.SHOPIFY_STORE_DOMAIN;
+const publicToken = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN;
+const privateToken = process.env.SHOPIFY_STOREFRONT_PRIVATE_TOKEN;
 const apiVersion = process.env.SHOPIFY_API_VERSION || "2025-10";
 
-export const shopifyConfigured = Boolean(domain && token);
+/** Bare myshopify domain, tolerant of a pasted protocol or trailing slash. */
+export const shopDomain = rawDomain
+  ? rawDomain.replace(/^https?:\/\//, "").replace(/\/.*$/, "").trim()
+  : undefined;
+
+export type StorefrontAuth = {
+  header: "X-Shopify-Storefront-Access-Token" | "Shopify-Storefront-Private-Token";
+  value: string;
+  kind: "public" | "private";
+};
+
+/**
+ * Pick the right token + header. Shopify exposes two Storefront API tokens:
+ *   - public  (hex string) → header `X-Shopify-Storefront-Access-Token` (safe client-side)
+ *   - private (`shpat_…`)  → header `Shopify-Storefront-Private-Token`  (server-side only)
+ *
+ * Every Shopify call in this app runs server-side, so we prefer the private
+ * token (higher rate limits, what Shopify recommends for servers). We also
+ * auto-correct a private token that was pasted into the public env var so the
+ * site works no matter which one you used.
+ */
+export function resolveStorefrontAuth(): StorefrontAuth | null {
+  if (privateToken) {
+    return { header: "Shopify-Storefront-Private-Token", value: privateToken, kind: "private" };
+  }
+  if (publicToken) {
+    if (publicToken.startsWith("shpat_")) {
+      return { header: "Shopify-Storefront-Private-Token", value: publicToken, kind: "private" };
+    }
+    return { header: "X-Shopify-Storefront-Access-Token", value: publicToken, kind: "public" };
+  }
+  return null;
+}
+
+const storefrontAuth = resolveStorefrontAuth();
+
+export const shopifyConfigured = Boolean(shopDomain && storefrontAuth);
 
 type GraphQLResponse<T> = {
   data?: T;
@@ -26,12 +63,12 @@ export async function shopifyFetch<T>({
   if (!shopifyConfigured) {
     throw new Error("Shopify is not configured");
   }
-  const endpoint = `https://${domain}/api/${apiVersion}/graphql.json`;
+  const endpoint = `https://${shopDomain}/api/${apiVersion}/graphql.json`;
   const res = await fetch(endpoint, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "X-Shopify-Storefront-Access-Token": token!,
+      [storefrontAuth!.header]: storefrontAuth!.value,
     },
     body: JSON.stringify({ query, variables }),
     ...(revalidate !== undefined ? { next: { revalidate } } : { cache }),
