@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import ShopClient from "@/components/ShopClient";
-import { CATEGORIES } from "@/lib/demo-data";
+import { buildCategories } from "@/lib/categories";
 import { getProducts } from "@/lib/shopify";
 
 export const revalidate = 120;
@@ -14,6 +14,7 @@ export const metadata: Metadata = {
 
 export default async function ShopPage() {
   const { products, demo } = await getProducts();
+  const categories = buildCategories(products, demo);
 
   return (
     <div className="px-4 sm:px-6">
@@ -37,7 +38,7 @@ export default async function ShopPage() {
           </div>
         }
       >
-        <ShopClient products={products} categories={CATEGORIES} />
+        <ShopClient products={products} categories={categories} />
       </Suspense>
     </div>
   );

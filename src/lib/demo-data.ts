@@ -1,12 +1,4 @@
-import type { Category, Product } from "./types";
-
-export const CATEGORIES: Category[] = [
-  { name: "Chicken", slug: "chicken", art: "drumstick", tagline: "Tender, juicy, never frozen" },
-  { name: "Mutton", slug: "mutton", art: "chops", tagline: "Soft, fresh & flavour-packed" },
-  { name: "Seafood", slug: "seafood", art: "prawn", tagline: "Coast-fresh, cleaned & cut" },
-  { name: "Eggs", slug: "eggs", art: "eggs", tagline: "Farm eggs, packed daily" },
-  { name: "Ready to Cook", slug: "ready-to-cook", art: "kebab", tagline: "Marinated by chefs" },
-];
+import type { Product } from "./types";
 
 const INR = (amount: number) => ({ amount, currencyCode: "INR" });
 

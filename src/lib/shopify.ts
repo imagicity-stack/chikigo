@@ -132,6 +132,7 @@ type ShopifyProductNode = {
   title: string;
   description: string;
   productType: string;
+  category: { name: string } | null;
   tags: string[];
   availableForSale: boolean;
   featuredImage: { url: string; altText: string | null; width: number; height: number } | null;
@@ -155,8 +156,28 @@ function normalizeVariant(v: ShopifyVariantNode): ProductVariant {
   };
 }
 
+/**
+ * Resolve the display category for a product.
+ *
+ * Preference order:
+ *  1. The structured **Category** field on the Shopify product (taxonomy,
+ *     e.g. "Chicken", "Eggs") — this is the field Shopify's admin pushes you
+ *     to fill in, so it's the source of truth.
+ *  2. The free-text **Product type** — but only when it isn't just a copy of
+ *     the product's name (CSV imports and some apps do that, which used to
+ *     turn every product into its own "category").
+ *  3. "Fresh Meat" as a last resort.
+ */
+function resolveCategory(node: ShopifyProductNode): string {
+  const taxonomy = node.category?.name?.trim();
+  if (taxonomy) return taxonomy;
+  const type = node.productType.trim();
+  if (type && type.toLowerCase() !== node.title.trim().toLowerCase()) return type;
+  return "Fresh Meat";
+}
+
 function normalizeProduct(node: ShopifyProductNode): Product {
-  const category = node.productType || "Fresh Meat";
+  const category = resolveCategory(node);
   const badge = node.tags.find((t) => /bestseller|new|premium|chef/i.test(t)) ?? null;
   return {
     id: node.id,
@@ -194,6 +215,9 @@ const PRODUCT_FIELDS = /* GraphQL */ `
     title
     description
     productType
+    category {
+      name
+    }
     tags
     availableForSale
     featuredImage {

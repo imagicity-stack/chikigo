@@ -5,11 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import ProductCard from "./ProductCard";
 import Reveal from "./Reveal";
 import { SearchIcon, XIcon } from "./Icons";
+import { slugify } from "@/lib/categories";
 import type { Category, Product } from "@/lib/types";
-
-function slugify(value: string): string {
-  return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-}
 
 export default function ShopClient({
   products,

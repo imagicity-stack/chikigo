@@ -13,8 +13,9 @@ import {
   TruckIcon,
   WhatsAppIcon,
 } from "@/components/Icons";
-import { CATEGORIES } from "@/lib/demo-data";
+import { buildCategories } from "@/lib/categories";
 import { getProducts } from "@/lib/shopify";
+import type { Category } from "@/lib/types";
 
 export const revalidate = 120;
 
@@ -26,12 +27,13 @@ const WA_LINK = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(
 export default async function HomePage() {
   const { products, demo } = await getProducts();
   const bestsellers = products.slice(0, 8);
+  const categories = buildCategories(products, demo);
 
   return (
     <>
       <Hero demo={demo} />
       <RedTicker />
-      <Categories />
+      <Categories categories={categories} />
       <Bestsellers>
         {bestsellers.map((p, i) => (
           <Reveal as="li" key={p.id} delay={(i % 4) * 70}>
@@ -173,7 +175,8 @@ function RedTicker() {
 
 /* ──────────────────────── categories ───────────────────────── */
 
-function Categories() {
+function Categories({ categories }: { categories: Category[] }) {
+  if (categories.length === 0) return null;
   return (
     <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20">
       <Reveal>
@@ -186,8 +189,13 @@ function Categories() {
       </Reveal>
 
       <ul className="mt-8 grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 lg:grid-cols-5">
-        {CATEGORIES.map((cat, i) => (
-          <Reveal as="li" key={cat.slug} delay={i * 70} className={i === 0 ? "col-span-2 md:col-span-1" : ""}>
+        {categories.map((cat, i) => (
+          <Reveal
+            as="li"
+            key={cat.slug}
+            delay={i * 70}
+            className={i === 0 && categories.length % 2 === 1 ? "col-span-2 md:col-span-1" : ""}
+          >
             <Link
               href={`/shop?cat=${cat.slug}`}
               className={`group flex h-full flex-col items-center gap-2 rounded-3xl border-3 border-ink bg-white p-5 text-center shadow-chunky-sm transition duration-200 hover:-translate-y-1.5 hover:bg-amber/20 hover:shadow-chunky ${
