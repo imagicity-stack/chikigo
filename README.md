@@ -76,11 +76,34 @@ Tip: set product types to `Chicken`, `Mutton`, `Seafood`, `Eggs`,
 The Storefront token never reaches the browser — all Shopify calls run in
 server components and the `/api/cart` route handler.
 
-## 📦 Deploy
+## 📦 Deploy on Vercel
 
-Works out of the box on Vercel/Netlify: set the env vars from `.env.example`
-in your project settings and deploy. `npm run build && npm start` for
-self-hosting.
+1. Go to [vercel.com/new](https://vercel.com/new) and **import the
+   `imagicity-stack/chikigo` repository** — Vercel auto-detects Next.js, no
+   build settings needed.
+2. Before the first deploy, open **Environment Variables** and add (for
+   Production + Preview):
+   - `SHOPIFY_STORE_DOMAIN` — `your-store.myshopify.com`
+   - `SHOPIFY_STOREFRONT_ACCESS_TOKEN` — your Storefront API token
+   - `NEXT_PUBLIC_WHATSAPP_NUMBER` — e.g. `91XXXXXXXXXX`
+   - `NEXT_PUBLIC_SITE_URL` — your final domain (can be added later; the
+     site auto-falls back to the Vercel production URL)
+3. **Deploy.** Production builds come from `main`, every branch/PR gets a
+   preview URL automatically.
+4. Add your **custom domain** under *Settings → Domains*, then set
+   `NEXT_PUBLIC_SITE_URL=https://yourdomain.com` and redeploy so OG tags &
+   sitemap use it.
+
+Already configured in the repo for Vercel:
+
+- `vercel.json` pins serverless functions (cart API, ISR) to **`bom1`
+  (Mumbai)** for low latency in India.
+- `robots.txt` + dynamic `sitemap.xml` (includes every product page).
+- Branded Open Graph share image (`/opengraph-image.png`) for WhatsApp,
+  Instagram & friends.
+- Security headers (nosniff, frame, referrer, permissions policies).
+
+Self-hosting works too: `npm run build && npm start`.
 
 ---
 

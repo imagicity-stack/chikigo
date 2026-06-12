@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BottomNav from "@/components/BottomNav";
 import { shopifyConfigured } from "@/lib/shopify";
+import { getSiteUrl } from "@/lib/site";
 
 const baloo = Baloo_2({
   subsets: ["latin"],
@@ -19,10 +20,8 @@ const manrope = Manrope({
   variable: "--font-manrope",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(getSiteUrl()),
   title: {
     default: "Chikigo — Fresh Cuts. Fast Delivery.",
     template: "%s · Chikigo",
